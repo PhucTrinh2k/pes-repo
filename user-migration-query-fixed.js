@@ -2291,17 +2291,26 @@ var userMigration = new Vue({
         },
         createWatcher() {
             var _this = this;
+            // this.$watch(
+            //     () => _this.dbConnectionList[0].customColumns,
+            //     function (newVal) {
+            //         if (_this.isExistConfig || !newVal){
+            //             _this.isCustomColumnsCorrect = true;
+            //             return;
+            //         }
+            //         if (!/^\s*(?:\w+\.\w+\.\w+\s+AS\s+\w+\s*,\s*)*(?:\w+\.\w+\.\w+\s+AS\s+\w+)\s*$|^\s*$/i.test(newVal)) {
+            //             _this.isCustomColumnsCorrect = false;
+            //         } else {
+            //             _this.isCustomColumnsCorrect = true;
+            //         }
+            //     },
+              
+            // );
             this.$watch(
-                () => _this.dbConnectionList[0].customColumns,
+                () => _this.dbConnectionList[0].url,
                 function (newVal) {
-                    if (_this.isExistConfig || !newVal){
-                        _this.isCustomColumnsCorrect = true;
-                        return;
-                    }
-                    if (!/^\s*(?:\w+\.\w+\.\w+\s+AS\s+\w+\s*,\s*)*(?:\w+\.\w+\.\w+\s+AS\s+\w+)\s*$|^\s*$/i.test(newVal)) {
-                        _this.isCustomColumnsCorrect = false;
-                    } else {
-                        _this.isCustomColumnsCorrect = true;
+                    if (newVal && _this.dbConnectionList[0].connectResult) {
+                        _this.dbConnectionList[0].connectResult = 'Failed'
                     }
                 },
               
