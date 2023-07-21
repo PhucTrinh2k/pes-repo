@@ -896,6 +896,9 @@ prefix="spring" %>
 		                            </div>   
                                 </div>
                             </form>
+                            <div v-show="connection.schedule" class="m-t-20">
+                               {{ translateCron(connection.schedule) }}
+                            </div>
                             <div v-if="!isCustomColumnsCorrect" class="result-text result-fail m-t-20">
                                 ${user_migration_customized_column_alert}
                             </div>                            

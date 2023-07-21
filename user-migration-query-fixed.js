@@ -2291,21 +2291,7 @@ var userMigration = new Vue({
         },
         createWatcher() {
             var _this = this;
-            // this.$watch(
-            //     () => _this.dbConnectionList[0].customColumns,
-            //     function (newVal) {
-            //         if (_this.isExistConfig || !newVal){
-            //             _this.isCustomColumnsCorrect = true;
-            //             return;
-            //         }
-            //         if (!/^\s*(?:\w+\.\w+\.\w+\s+AS\s+\w+\s*,\s*)*(?:\w+\.\w+\.\w+\s+AS\s+\w+)\s*$|^\s*$/i.test(newVal)) {
-            //             _this.isCustomColumnsCorrect = false;
-            //         } else {
-            //             _this.isCustomColumnsCorrect = true;
-            //         }
-            //     },
-              
-            // );
+
             this.$watch(
                 () => _this.dbConnectionList[0].url,
                 function (newVal) {
@@ -2315,15 +2301,77 @@ var userMigration = new Vue({
                 },
               
             );
-            // this.$watch(
-            //     () => _this.steps[1].isActive,
-            //     function (newVal) {
-            //         if (newVal) {
-            //             _this.getStatusList(false);
-            //         }
-            //     },
-            // );           
-        }
+         
+        },
+        translateCronQuartzToBasic(quartzExpression) {
+          // Split the quartz cron expression into its components.
+            var [second, minute, hour, dayOfMonth, month, dayOfWeek] = quartzExpression.split(" ");
+
+            // Translate '?' back to '*'.
+            dayOfMonth = dayOfMonth === "?" ? "*" : dayOfMonth;
+            dayOfWeek = dayOfWeek === "?" ? "*" : dayOfWeek;
+
+            // Form the basic cron expression and return it.
+            var basicCron = [minute, hour, dayOfMonth, month, dayOfWeek].join(" ");
+            return basicCron;
+        },
+        translateCron(expr) {
+            var basicCron = this.translateCronQuartzToBasic(expr);
+            var position;
+            var explainedText;
+            let pieces = basicCron.split(' ');
+
+            const mapping = {
+                0: {
+                    every: "minute",
+                    remainingText:"",
+                },
+                1: {
+                    every: "hour",
+                    remainingText: "minute",
+                },
+                2: {
+                    every: "day",
+                    remainingText: "at", 
+                },
+                3: {
+                    every: "month",
+                    remainingText: "day, at"
+                },
+                4: {
+                    every: {
+                        1: "Monday",
+                        2: "Tuesday",
+                        3: "Wedsnesday",
+                        4: "Thursday",
+                        5: "Friday",
+                        6: "Saturday",
+                        7: "Sunday"
+                    },
+                    remainingText: "at"
+
+                } 
+            }
+            pieces.forEach( (fieldValue, idx) =>{ 
+                if (fieldValue.includes('/')) {
+                    position = idx;
+                    return;
+                }
+                  
+            })
+            explainedText = position ? `Every ${pieces[position].match(/\d+/)[0]} ${mapping[position].every}` : "Every " + pieces[4].split(",").map( el => mapping[4].every[el]).join(",");
+            
+            if (position) {
+                explainedText += mapping[position].remainingText === "" ? "" : mapping[position].remainingText === "minute" ? " on minute " + pieces[0] : mapping[position].remainingText === "at" ? " at " + pieces[1] + ":" + pieces[0] : " on day " + pieces[2] + " at " + pieces[1] + ":" + pieces[0];
+            } else {
+                explainedText += " at " + pieces[1] + ":" + pieces[0];
+            }
+
+
+
+            return explainedText;
+        },
+
     },
 
 });
