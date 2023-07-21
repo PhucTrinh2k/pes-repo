@@ -896,12 +896,9 @@ prefix="spring" %>
 		                            </div>   
                                 </div>
                             </form>
-                            <div v-show="connection.schedule" class="m-t-20">
+                            <div v-show="connection.schedule" class="m-t-20 text-center" style="font-weight: 550;">
                                {{ translateCron(connection.schedule) }}
                             </div>
-                            <div v-if="!isCustomColumnsCorrect" class="result-text result-fail m-t-20">
-                                ${user_migration_customized_column_alert}
-                            </div>                            
 
                             <div class="modal-save text-center m-t-20 clearfix" style="width: 40%; position: relative; margin-left: 30%; margin-right: 30%; display: grid; grid-template-columns: 0.5fr 2fr 0.5fr 2fr 0.5fr;">
                                 
@@ -1921,7 +1918,7 @@ prefix="spring" %>
                         </div>    
 
                     </div>
-                    <div class="modal-save text-center m-t-10 modal-footer-custom">
+                    <div class="modal-save text-center m-t-10" style="display: grid; grid-template-columns: 3fr 1fr 1fr 1fr 3fr" >
                         <div class="btn btn-red text-center" style="grid-column: 3;" @click="saveJoinCoulmn">
                             <spring:message
                             code="save"
@@ -2419,6 +2416,11 @@ prefix="spring" %>
                                 <label :for="label" > {{ label }} </label> &nbsp;
                             </span> 
                         at &nbsp; <input type="time" id="time1" value="00:00" v-model="hourMinuteInput">
+                            <div v-if="userPrompt.dateOfWeekPrompt">
+                                <b style="color: red;"> 
+                                    <spring:message code="user-migration-DoW-alert" text="Please select a day in week" />  
+                                </b>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -2433,13 +2435,14 @@ prefix="spring" %>
                 </table>
             </div>
             <div class="modal-save text-center m-t-20">
-                <div
+                <button
+                :disabled="!showCron"
                 class="btn btn-red common-button"
                 style="width: auto"
                 @click="saveCron()"
                 >
                     <spring:message code="save" text="저장" />
-                </div>
+                </button>
             </div>
         </div>
     </div>

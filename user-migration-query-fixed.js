@@ -2354,7 +2354,6 @@ var userMigration = new Vue({
                     position = idx;
                     return;
                 }
-                  
             })
             explainedText = position ? `Every ${pieces[position].match(/\d+/)[0]} ${mapping[position].every}` : "Every " + pieces[4].split(",").map( el => mapping[4].every[el]).join(",");
             
@@ -2363,9 +2362,6 @@ var userMigration = new Vue({
             } else {
                 explainedText += " at " + pieces[1] + ":" + pieces[0];
             }
-
-
-
             return explainedText;
         },
 
@@ -2755,6 +2751,7 @@ var cronModal = new Vue({
             }
         },
         selectTab(num) {
+            this.showCron = true;
             this.setFalse(this.fieldSelected);
             switch (num){
                 case 1:
@@ -2908,6 +2905,10 @@ var cronModal = new Vue({
         },
         dateOfWeekInput: function (val) {
             if(this.isReset) {
+                return;
+            }
+            if (!val.length) {
+                this.userPrompt.dateOfWeekPrompt = true;
                 return;
             }
             this.changeCronField(4, val);
